@@ -9,15 +9,14 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('books', function (Blueprint $table) {
+        Schema::create('loans', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->string('author');
-            $table->text('description')->nullable();
-            $table->date('published_at')->nullable();
-            $table->boolean('is_available')->default(true);
+            $table->foreignId('book_id')->constrained()->onDelete('cascade');
+            $table->dateTime('borrowed_at');
+            $table->dateTime('returned_at')->nullable();
+            $table->boolean('is_returned')->default(false);
             $table->timestamps();
         });
     }
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('books');
+        Schema::dropIfExists('loans');
     }
 };

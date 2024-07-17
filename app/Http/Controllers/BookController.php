@@ -42,42 +42,43 @@ class BookController extends Controller
         $newBook->author = $validatedData['author'];
         $newBook->description = $validatedData['description'];
         $newBook->published_at = $validatedData['published_at'];
-
         // Saving on database
         $newBook->save();
-
+        // Redirect to home with success message
         return redirect()->route('home')->with('success', 'Book created successfully.');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit($id)
     {
-        //
+        $book = Book::findOrFail($id);
+
+        return view('editBook', compact('book'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        // Validate data form
+        $validatedData = $request->validate([
+            'title' => 'required|string|max:255',
+            'author' => 'required|string|max:255',
+            'description' => 'required|string',
+            'published_at' => 'required|date',
+        ]);
+        // Book id exists
+        $book = Book::findOrFail($id);
+        // Update existing book
+        $book->title = $validatedData['title'];
+        $book->author = $validatedData['author'];
+        $book->description = $validatedData['description'];
+        $book->published_at = $validatedData['published_at'];
+        $book->save();
+        // Redirect to home and with message
+        return redirect()->route('home')->with('success', 'Book updated successfully!');
     }
 }
